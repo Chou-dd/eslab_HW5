@@ -2,6 +2,7 @@ from bluepy.btle import Peripheral, UUID
 from bluepy.btle import Scanner, DefaultDelegate
 
 led_light = bytes(0x00)
+ID = 0
 class ScanDelegate(DefaultDelegate):
     def __init__(self):
         DefaultDelegate.__init__(self)
@@ -15,9 +16,21 @@ class ScanDelegate(DefaultDelegate):
     def handleNotification(self, cHandle, data):
         # ... perhaps check cHandle
         # ... process 'data'
-        global led_light
-        print(data)
-        led_light = data
+        #global led_light
+        global ID
+        ID = data
+        """
+        data = int.from_bytes(data, byteorder='little')
+        print(hex(data))
+        if(data != 0):
+            led_light = bytes(0x01)
+            print(led_light)
+            print("Hi\n")
+        else:
+            led_light = bytes(0x00)
+            print(led_light)
+            print("iH\n")
+        """
         #print("handleNotification", led_light)
         
 scanner = Scanner().withDelegate(ScanDelegate())
@@ -60,6 +73,17 @@ try:
             #handleNotification() was called
             #dev.writeCharacteristic(cccd, bytes([0x01]))
             #print("while", led_light)
+            #print(led_light)
+            ID = int.from_bytes(ID, byteorder='little')
+            print(hex(ID))
+            if(ID != 0):
+                led_light = bytes([0x01])
+                #print(led_light)
+                #print("Hi\n")
+            else:
+                led_light = bytes([0x00])
+                #print(led_light)
+                #print("iH\n")
             led_ch.write(led_light)
             continue
         print("Waiting...")
